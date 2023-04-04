@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/Redeamerz/polly#readme",
   "dependencies": {
+    "canvas": "^2.11.2",
     "chart.js": "^4.2.1",
     "discord.js": "^14.7.1",
     "dotenv": "^16.0.3"
