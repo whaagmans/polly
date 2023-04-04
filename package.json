@@ -1,7 +1,7 @@
 {
-  "name": "discord-bot-typescript-template",
+  "name": "polly",
   "version": "1.0.0",
-  "description": "A template for creating discord bots with Typescript with an easy to understand architecture",
+  "description": "Discord bot that allows users to start polls which will be updated live in a visual way through graphs",
   "main": "index.js",
   "scripts": {
     "start": "ts-node src/Bot.ts",
@@ -9,15 +9,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Redeamerz/discord-bot-typescript-template.git"
+    "url": "git+https://github.com/Redeamerz/polly.git"
   },
   "keywords": [],
   "author": "Wesley Haagmans",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/Redeamerz/discord-bot-typescript-template/issues"
+    "url": "https://github.com/Redeamerz/polly/issues"
   },
-  "homepage": "https://github.com/Redeamerz/discord-bot-typescript-template#readme",
+  "homepage": "https://github.com/Redeamerz/polly#readme",
   "dependencies": {
     "discord.js": "^14.7.1",
     "dotenv": "^16.0.3"
