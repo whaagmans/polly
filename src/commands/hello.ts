@@ -8,7 +8,7 @@ const Hello: Command = {
 	run: async (interaction: CommandInteraction) => {
 		const content = 'Hello world!';
 
-		await interaction.followUp({
+		await interaction.reply({
 			ephemeral: true,
 			content,
 		});
