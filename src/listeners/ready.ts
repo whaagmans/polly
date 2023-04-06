@@ -47,7 +47,7 @@ const ready = (client: Client): void => {
 
 		// Set Bot activity/presence
 		client.user.setPresence({
-			activities: [{ name: 'Example activity', type: ActivityType.Playing }],
+			activities: [{ name: 'Polls', type: ActivityType.Watching }],
 		});
 		console.log(`${client.user.username} is online`);
 	});
