@@ -19,7 +19,6 @@
   },
   "homepage": "https://github.com/Redeamerz/polly#readme",
   "dependencies": {
-    "chart.js": "^4.2.1",
     "discord.js": "^14.7.1",
     "dotenv": "^16.0.3",
     "quickchart-js": "^3.1.2"
