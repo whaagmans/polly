@@ -1,5 +1,5 @@
 import { ActivityType, Client, REST, Routes } from 'discord.js';
-import { Commands } from 'src/Commands';
+import { Commands } from '../Commands';
 
 const ready = (client: Client): void => {
 	client.on('ready', async () => {
@@ -47,7 +47,7 @@ const ready = (client: Client): void => {
 
 		// Set Bot activity/presence
 		client.user.setPresence({
-			activities: [{ name: 'Polls', type: ActivityType.Watching }],
+			activities: [{ name: 'Poll activity', type: ActivityType.Watching }],
 		});
 		console.log(`${client.user.username} is online`);
 	});
