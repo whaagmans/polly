@@ -1,7 +1,6 @@
-import Hello from '@/commands/hello';
-import { Command } from '@/types/Command';
 import Poll from './commands/poll';
+import { Command } from './types/Command';
 
-const Commands: Command[] = [Hello, Poll];
+const Commands: Command[] = [Poll];
 
 export { Commands };
