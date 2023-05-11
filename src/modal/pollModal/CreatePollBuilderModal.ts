@@ -5,19 +5,18 @@ import {
 	TextInputStyle,
 } from 'discord.js';
 
-const CreatePollBuilderModal = (totalRows: number) => {
+const CreatePollBuilderModal = (title: string, totalRows: number) => {
 	const modal = new ModalBuilder()
 		.setCustomId('PollBuilderModals')
-		.setTitle('Poll Builder');
+		.setTitle(title);
 
-	// TODO: further here
 	const rows: ActionRowBuilder<TextInputBuilder>[] = [];
 
 	for (let row = 1; row < totalRows + 1; row++) {
 		const textInputRow = new TextInputBuilder()
 			.setCustomId(`inputOption${row}`)
 			.setLabel(`Option ${row}`)
-			.setPlaceholder(`Write option ${row} here.s`)
+			.setPlaceholder(`Write option ${row} here.`)
 			.setStyle(TextInputStyle.Short)
 			.setRequired(true);
 		const actionRow = new ActionRowBuilder<TextInputBuilder>().addComponents(
