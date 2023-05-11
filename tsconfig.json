@@ -19,14 +19,6 @@
         ],
         "sourceMap": false,
         "baseUrl": "./",
-        "paths": {
-            "@/types/*": [
-                "src/types/*"
-            ],
-            "@/commands/*": [
-                "src/commands/*"
-            ]
-        }
     },
     "files": [
         "src/Bot.ts"
