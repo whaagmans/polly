@@ -1,86 +1,8 @@
-import { Command } from '@/types/Command';
-import {
-	Collection,
-	CommandInteraction,
-	EmbedBuilder,
-	GuildEmoji,
-	Message,
-	MessageReaction,
-	PartialMessage,
-	ReactionEmoji,
-	SlashCommandBuilder,
-	User,
-} from 'discord.js';
-import QuickChart from 'quickchart-js';
-
-function generateVibrantColor() {
-	return Math.floor(Math.random() * 155) + 100;
-}
-
-async function assignRandomColors(
-	bars: number,
-	opacity: number
-): Promise<string[]> {
-	return Array.from(
-		{ length: bars },
-		() =>
-			`rgba(${generateVibrantColor()}, ${generateVibrantColor()}, ${generateVibrantColor()}, ${opacity})`
-	);
-}
-
-async function updatePoll(
-	chart: QuickChart,
-	pollName: string,
-	labels: string[],
-	data: number[],
-	message: Message<boolean> | PartialMessage,
-	colors: string[],
-	title = 'Latest Chart',
-	description = `Here's a chart that was generated for the poll`
-) {
-	const chartEmbed = new EmbedBuilder()
-		.setTitle(title)
-		.setDescription(description)
-		.setImage(
-			(await createPoll(chart, pollName, labels, data, colors)).getUrl()
-		);
-
-	message.edit({ embeds: [chartEmbed] });
-}
-
-async function createPoll(
-	chart: QuickChart,
-	pollName: string,
-	labels: string[],
-	data: number[],
-	colors: string[]
-): Promise<QuickChart> {
-	return chart
-		.setConfig({
-			type: 'horizontalBar',
-			data: {
-				labels,
-				datasets: [
-					{
-						label: pollName,
-						data,
-						backgroundColor: colors,
-					},
-				],
-			},
-		})
-		.setWidth(800)
-		.setHeight(400)
-		.setBackgroundColor('rgba(32,34,37,0.95)');
-}
-
-async function getIndexOfEmojiArray(
-	emojiArr: string[],
-	emoji: GuildEmoji | ReactionEmoji
-) {
-	if (!emoji.name) return -1;
-	return emojiArr.indexOf(emoji.name);
-}
+import { CommandInteraction, SlashCommandBuilder } from 'discord.js';
+import CreatePollBuilderModal from '../modal/pollModal/CreatePollBuilderModal';
+import PollBuilderResponse from '../modal/pollModal/PollBuilderResponse';
+import { Command } from '../types/Command';
+import { sendErrorMessage } from '../utils/QuickChartBuilder';
 
 const Poll: Command = {
 	data: new SlashCommandBuilder()
@@ -90,94 +12,50 @@ const Poll: Command = {
 			option
 				.setName('poll_name')
 				.setDescription('Name of your poll')
+				.setMaxLength(45)
+				.setRequired(true)
+		)
+		.addIntegerOption((option) =>
+			option
+				.setName('poll_options_amount')
+				.setDescription('How many options does your poll have?')
+				.setMinValue(2)
+				.setMaxValue(5)
 				.setRequired(true)
 		),
 	run: async (interaction: CommandInteraction) => {
 		if (!interaction.isChatInputCommand()) return;
-		const chart = new QuickChart();
 
-		const emojiArr: string[] = ['1️⃣', '2️⃣', '3️⃣', '❌'];
+		const rowAmount = interaction.options.getInteger('poll_options_amount');
 
-		const labels = ['option 1', 'option 2', 'option 3'];
-		const data = [0, 0, 0];
-		const colors: string[] = await assignRandomColors(data.length, 0.95);
-
+		if (!rowAmount) {
+			await sendErrorMessage(interaction);
+			return;
+		}
 		const pollName = interaction.options.getString('poll_name');
+
 		if (!pollName) {
-			await interaction.reply({
-				content: 'Something went wrong, no poll name received',
-				ephemeral: true,
-			});
+			await sendErrorMessage(interaction);
 			return;
 		}
 
-		const chartEmbed = new EmbedBuilder()
-			.setTitle('Latest Chart')
-			.setDescription(`Here's a chart that I generated`)
-			.setImage(
-				(await createPoll(chart, pollName, labels, data, colors)).getUrl()
-			);
+		const modal = CreatePollBuilderModal(pollName, +rowAmount);
 
-		const message = await interaction.reply({
-			embeds: [chartEmbed],
-			fetchReply: true,
-		});
-		for (const emoji of emojiArr) {
-			message.react(emoji);
+		interaction.showModal(modal);
+
+		const modalSubmitted = await interaction
+			.awaitModalSubmit({
+				time: 120000,
+				filter: (i) => i.user.id === interaction.user.id,
+			})
+			.catch((err) => {
+				console.error(err);
+				return null;
+			});
+
+		if (modalSubmitted) {
+			await PollBuilderResponse(modalSubmitted, pollName, interaction.user.id);
 		}
-
-		const filter = (reaction: MessageReaction, user: User) =>
-			user.id !== message.author.id;
-
-		const collector = message.createReactionCollector({
-			filter,
-			dispose: true,
-		});
-
-		collector.on('collect', async (reaction: MessageReaction) => {
-			if (!reaction.emoji.name) return;
-			const emojiIndex = await getIndexOfEmojiArray(emojiArr, reaction.emoji);
-
-			if (emojiIndex === emojiArr.length - 1) {
-				collector.stop();
-			}
-
-			if (emojiIndex >= 0) {
-				data[emojiIndex]++;
-				updatePoll(chart, pollName, labels, data, reaction.message, colors);
-			}
-		});
-
-		collector.on('remove', async (reaction: MessageReaction) => {
-			if (!reaction.emoji.name) return;
-			const emojiIndex = await getIndexOfEmojiArray(emojiArr, reaction.emoji);
-			if (emojiIndex >= 0) {
-				data[emojiIndex]--;
-				updatePoll(chart, pollName, labels, data, reaction.message, colors);
-			}
-		});
-
-		collector.on('end', (collected: Collection<string, MessageReaction>) => {
-			const title = `Results of ${pollName}`;
-			const description = `Poll results are based on ${
-				collected.size - 1 //size minus the finish reaction
-			} votes`;
-
-			const reaction = collected.find((item) => item.message != null);
-			if (!reaction) return;
-
-			console.log(`Collected ${collected.size} reactions`);
-			updatePoll(
-				chart,
-				pollName,
-				labels,
-				data,
-				reaction.message,
-				colors,
-				title,
-				description
-			);
-		});
 	},
 };
 
