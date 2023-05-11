@@ -2,7 +2,7 @@
 # BUILD FOR LOCAL DEVELOPMENT
 ###################
 
-FROM node:19-alpine As development
+FROM node:19-alpine AS development
 
 WORKDIR /usr/src/app
 
@@ -18,7 +18,7 @@ USER node
 # BUILD FOR PRODUCTION
 ###################
 
-FROM node:19-alpine As build
+FROM node:19-alpine AS build
 
 WORKDIR /usr/src/app
 
@@ -40,7 +40,7 @@ USER node
 # PRODUCTION
 ###################
 
-FROM node:19-alpine As production
+FROM node:19-alpine AS production
 
 RUN apk add --no-cache ffmpeg
 
