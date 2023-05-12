@@ -68,6 +68,7 @@ export async function createPoll(
 	data: number[],
 	colors: string[]
 ): Promise<QuickChart> {
+	console.log(data);
 	return chart
 		.setConfig({
 			type: 'horizontalBar',
@@ -97,6 +98,7 @@ export async function createPoll(
 					xAxes: [
 						{
 							ticks: {
+								beginAtZero: true,
 								fontColor: 'white',
 							},
 						},
