@@ -63,8 +63,6 @@ const PollBuilderResponse = async (
 	const stopEmoji = '❌';
 	const labels: string[] = getAllModalFieldsAsString(interaction.fields.fields);
 
-	const startData = new Array(labels.length).fill(0);
-
 	const colors: string[] = await assignRandomColors(labels.length, 0.95);
 
 	if (!pollName) {
@@ -72,7 +70,7 @@ const PollBuilderResponse = async (
 		return;
 	}
 
-	const chartInfo = new ChartInfo(pollName, labels, startData, colors, userId);
+	const chartInfo = new ChartInfo(pollName, labels, colors, userId);
 
 	const chartEmbed = new EmbedBuilder()
 		.setTitle(chartInfo.pollName)

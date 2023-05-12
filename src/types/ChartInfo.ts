@@ -22,14 +22,13 @@ class ChartInfo {
 	constructor(
 		pollName: string,
 		labels: string[],
-		data: number[],
 		colors: string[],
 		createdByUser: string
 	) {
 		this.pollName = pollName;
 		this.chartLabels = setChartLabels(labels.length);
 		this.labels = labels;
-		this.data = data;
+		this.data = new Array(labels.length).fill(0);
 		this.colors = colors;
 		this.title = pollName;
 		this.description = `${this.totalVotes} votes`;
